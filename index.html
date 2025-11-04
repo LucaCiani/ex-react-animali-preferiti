@@ -10,27 +10,41 @@
         <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
         <script type="text/babel">
+            const { useState } = React;
             function ShowAnimals() {
-                const animals = [
+                const [animals, setAnimals] = useState([]);
+
+                const animalsChoices = [
                     "Cane",
                     "Gatto",
-                    "Coniglio",
-                    "Tartaruga",
                     "Pappagallo",
+                    "Cavallo",
+                    "Panda",
                 ];
+
+                function handleClick() {
+                    const randomIndex = Math.floor(
+                        Math.random() * animalsChoices.length
+                    );
+                    const randomAnimal = animalsChoices[randomIndex];
+                    setAnimals([...animals, randomAnimal]);
+                }
                 return (
-                    <details>
-                        <summary>
-                            <strong>Animali</strong>
-                        </summary>
-                        <div>
-                            <ul>
-                                {animals.map((animal) => {
-                                    return <li key={animal}>{animal}</li>;
-                                })}
-                            </ul>
-                        </div>
-                    </details>
+                    <>
+                        <button onClick={handleClick}>Aggiungi Animale</button>
+                        <details>
+                            <summary>
+                                <strong>Animali</strong>
+                            </summary>
+                            <div>
+                                <ul>
+                                    {animals.map((animal) => {
+                                        return <li key={animal}>{animal}</li>;
+                                    })}
+                                </ul>
+                            </div>
+                        </details>
+                    </>
                 );
             }
 
