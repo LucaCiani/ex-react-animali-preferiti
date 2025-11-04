@@ -11,39 +11,96 @@
 
         <script type="text/babel">
             const { useState } = React;
+
+            function Modal({
+                title,
+                content,
+                show = false,
+                onClose = () => {},
+                onConfirm = () => {},
+            }) {
+                return (
+                    show &&
+                    ReactDOM.createPortal(
+                        <div className="modal-container">
+                            <div className="modal">
+                                <h2>{title}</h2>
+                                {content}
+                                <div
+                                    style={{
+                                        marginTop: "1em",
+                                        display: "flex",
+                                        gap: "0.5em",
+                                    }}
+                                >
+                                    <button onClick={onClose}>Annulla</button>
+                                    <button onClick={onConfirm}>
+                                        Conferma
+                                    </button>
+                                </div>
+                            </div>
+                        </div>,
+                        document.body
+                    )
+                );
+            }
+
             function ShowAnimals() {
                 const [animals, setAnimals] = useState([]);
+                const [showModal, setShowModal] = useState(false);
+                const [inputValue, setInputValue] = useState("");
 
-                const animalsChoices = [
-                    "Cane",
-                    "Gatto",
-                    "Pappagallo",
-                    "Cavallo",
-                    "Panda",
-                ];
-
-                function handleClick() {
-                    const randomIndex = Math.floor(
-                        Math.random() * animalsChoices.length
-                    );
-                    const randomAnimal = animalsChoices[randomIndex];
-                    setAnimals([...animals, randomAnimal]);
+                function handleAddClick() {
+                    setShowModal(true);
+                    setInputValue("");
                 }
+
+                function handleClose() {
+                    setShowModal(false);
+                    setInputValue("");
+                }
+
+                function handleConfirm() {
+                    if (inputValue.trim()) {
+                        setAnimals([...animals, inputValue.trim()]);
+                    }
+                    setShowModal(false);
+                    setInputValue("");
+                }
+
+                const modalContent = (
+                    <input
+                        type="text"
+                        placeholder="Nome animale"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                    />
+                );
+
                 return (
                     <>
-                        <button onClick={handleClick}>Aggiungi Animale</button>
+                        <button onClick={handleAddClick}>
+                            Aggiungi Animale
+                        </button>
                         <details>
                             <summary>
                                 <strong>Animali</strong>
                             </summary>
                             <div>
                                 <ul>
-                                    {animals.map((animal) => {
-                                        return <li key={animal}>{animal}</li>;
-                                    })}
+                                    {animals.map((animal) => (
+                                        <li key={animal}>{animal}</li>
+                                    ))}
                                 </ul>
                             </div>
                         </details>
+                        <Modal
+                            title="Aggiungi un animale"
+                            content={modalContent}
+                            show={showModal}
+                            onClose={handleClose}
+                            onConfirm={handleConfirm}
+                        />
                     </>
                 );
             }
